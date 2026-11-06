@@ -1,0 +1,174 @@
+/* Versión 1: estilo funcional con fondo oscuro. El diseño se itera en las versiones 2 y 3. */
+:root {
+  --bg: #0b0d14;
+  --card: #151926;
+  --card-2: #1d2233;
+  --text: #e8eaf2;
+  --muted: #8b90a5;
+  --border: #262c40;
+  --accent: #7c8cff;
+  --danger: #ff6b6b;
+  --success: #3ecf8e;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); }
+
+.app { max-width: 820px; margin: 0 auto; padding: 24px 16px 48px; }
+
+.header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+.header h1 { margin: 0; font-size: 2rem; letter-spacing: 0.02em; }
+.header p { margin: 4px 0 0; color: var(--muted); }
+.progress { text-align: right; font-size: 1.1rem; color: var(--muted); }
+.progress strong { font-size: 2rem; color: var(--text); }
+.progress span { display: block; font-size: 0.8rem; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.tabs button { background: var(--card); color: var(--muted); border: 1px solid var(--border); }
+.tabs button.active { background: var(--accent); color: #0b0d14; border-color: var(--accent); }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.card h2, .group h2 { margin: 0 0 12px; font-size: 1.1rem; }
+.group { margin-bottom: 24px; }
+
+button {
+  font: inherit;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  background: var(--accent);
+  color: #0b0d14;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:disabled { opacity: 0.6; cursor: default; }
+button.secondary { background: var(--card-2); color: var(--text); }
+button.danger { background: rgb(255 107 107 / 0.12); color: var(--danger); }
+button.link { background: none; color: var(--accent); padding: 0; margin-bottom: 12px; }
+
+input, textarea {
+  font: inherit;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-2);
+  color: var(--text);
+}
+
+/* Grilla de la Pokédex */
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+.body-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 8px;
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-weight: 400;
+  position: relative;
+}
+.body-card:hover { border-color: var(--accent); }
+.body-card.seen { border-color: rgb(62 207 142 / 0.5); }
+.body-card small { color: var(--muted); }
+.body-card.seen small { color: var(--success); }
+.number { position: absolute; top: 8px; left: 10px; font-size: 0.75rem; color: var(--muted); }
+
+.orb {
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--orb) 40%, white), var(--orb) 45%, color-mix(in srgb, var(--orb) 30%, black));
+}
+.orb.unseen { background: #2a3045; filter: none; }
+
+/* Ficha */
+.detail-head { display: flex; gap: 16px; align-items: center; }
+.detail-head h2 { font-size: 1.6rem; margin: 0; }
+.tip { background: var(--card-2); padding: 12px; border-radius: 8px; line-height: 1.5; }
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0 0;
+}
+.facts div { background: var(--card-2); padding: 10px 12px; border-radius: 8px; }
+.facts dt { font-size: 0.8rem; color: var(--muted); }
+.facts dd { margin: 4px 0 0; font-weight: 600; }
+
+/* Formulario */
+.form { display: grid; gap: 16px; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form label, .form fieldset { display: grid; gap: 6px; font-weight: 600; font-size: 0.9rem; }
+fieldset { border: none; padding: 0; margin: 0; }
+legend { padding: 0; margin-bottom: 6px; }
+.counter { font-weight: 400; color: var(--muted); font-size: 0.8rem; text-align: right; }
+.segmented { display: flex; gap: 6px; flex-wrap: wrap; }
+.segmented button { background: var(--card-2); color: var(--text); font-weight: 400; }
+.segmented button.active { background: var(--accent); color: #0b0d14; font-weight: 600; }
+.actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* Lista de avistamientos */
+.sightings { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.sighting { display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.sighting:last-child { border-bottom: none; padding-bottom: 0; }
+.sighting-info { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.sighting-info small { color: var(--muted); }
+.notes { margin: 4px 0 0; font-size: 0.9rem; line-height: 1.4; }
+.sighting-actions { display: flex; gap: 6px; }
+.sighting-actions button { padding: 6px 10px; font-size: 0.85rem; }
+
+.muted, .loading { color: var(--muted); }
+.field-error { color: var(--danger); font-size: 0.85rem; font-weight: 400; }
+.error-box { background: rgb(255 107 107 / 0.12); color: var(--danger); padding: 12px; border-radius: 8px; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.4);
+  z-index: 10;
+}
+.toast.success { background: var(--success); color: #0b0d14; }
+.toast.error { background: var(--danger); color: #0b0d14; }
+
+.footer { text-align: center; color: var(--muted); font-size: 0.85rem; margin-top: 32px; }
+.footer a { color: inherit; }
+
+@media (max-width: 560px) {
+  .header h1 { font-size: 1.6rem; }
+  .row { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .sighting { flex-wrap: wrap; }
+  .sighting-actions { width: 100%; }
+  .sighting-actions button { flex: 1; }
+}
+
+/* Buscador de la Pokédex */
+.search { margin-bottom: 20px; }
+.search input { padding: 12px 14px; font-size: 1rem; }
+.empty .link { margin: 0; }
+.search small { display: block; margin-top: 6px; }

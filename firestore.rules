@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Avistamientos: cada visitante (login anónimo) solo accede a los suyos
+    match /users/{uid}/sightings/{sightingId} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && isValidSighting(request.resource.data);
+    }
+
+    function isValidSighting(d) {
+      return d.bodyId is string && d.bodyId.size() > 0 && d.bodyId.size() <= 100
+        && d.bodyName is string && d.bodyName.size() > 0 && d.bodyName.size() <= 100
+        && d.date is string && d.date.size() == 10
+        && d.place is string && d.place.size() <= 100
+        && d.instrument in ['ojo', 'binoculares', 'telescopio']
+        && d.notes is string && d.notes.size() <= 1000;
+    }
+  }
+}
