@@ -101,6 +101,15 @@ export function computeTonight(catalog, location = BUENOS_AIRES, now = new Date(
   return { night, byBody, moon: moonPhase(now), location, computedAt: now }
 }
 
+// Posición (altura y dirección) de cada cuerpo en un momento dado, para dibujar la brújula
+export function positionsAt(bodies, location, date) {
+  const observer = new Astronomy.Observer(location.lat, location.lon, 0)
+  return bodies.map((b) => {
+    const { altitude, azimuth } = altAz(b.sky, date, observer)
+    return { ...b, altitude, azimuth }
+  })
+}
+
 export const formatTime = (date) =>
   date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
 

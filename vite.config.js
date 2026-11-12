@@ -7,14 +7,20 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     server: {
-      // En desarrollo (npm run dev) hace lo mismo que api/body.js en Vercel:
-      // reenvía /api/body?id=mars a Le Système Solaire agregando el token.
+      // En desarrollo (npm run dev) hace lo mismo que las funciones de la carpeta api/ en Vercel
       proxy: {
+        // /api/body?id=mars → Le Système Solaire, agregando el token
         '/api/body': {
           target: 'https://api.le-systeme-solaire.net',
           changeOrigin: true,
           rewrite: (path) => `/rest/bodies/${new URLSearchParams(path.split('?')[1]).get('id')}`,
           headers: { Authorization: `Bearer ${env.SOLAR_API_KEY}` },
+        },
+        // /api/apod → foto del día de NASA, agregando la clave
+        '/api/apod': {
+          target: 'https://api.nasa.gov',
+          changeOrigin: true,
+          rewrite: () => `/planetary/apod?thumbs=true&api_key=${env.NASA_API_KEY || 'DEMO_KEY'}`,
         },
       },
     },

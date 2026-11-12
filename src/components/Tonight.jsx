@@ -2,6 +2,9 @@ import { CATALOG, INSTRUMENTS } from '../data/catalog'
 import { formatTime, rangeText } from '../services/sky'
 import Orb from './Orb'
 import WishButton from './WishButton'
+import SkyDome from './SkyDome'
+import Apod from './Apod'
+import { nasaThumb } from '../services/nasa'
 
 // Pestaña "Esta noche": qué cuerpos se pueden ver, cuándo y hacia dónde mirar
 export default function Tonight({ sky, seenIds, wishIds, onToggleWish, onOpen, onUseMyLocation, locating }) {
@@ -56,7 +59,7 @@ export default function Tonight({ sky, seenIds, wishIds, onToggleWish, onOpen, o
             return (
               <li key={b.id}>
                 <button className="tonight-item" onClick={() => onOpen(b.id)}>
-                  <Orb color={b.color} seen={seenIds.has(b.id)} size={48} />
+                  <Orb color={b.color} image={nasaThumb(b.nasaId)} seen={seenIds.has(b.id)} size={48} />
                   <span className="tonight-text">
                     <strong>{b.name}</strong>
                     <span className="tonight-time">Mejor a las {formatTime(info.bestTime)}</span>
@@ -73,6 +76,10 @@ export default function Tonight({ sky, seenIds, wishIds, onToggleWish, onOpen, o
         </ul>
       </section>
 
+      {night && visible.length > 0 && (
+        <SkyDome bodies={visible} night={night} location={location} onOpen={onOpen} />
+      )}
+
       {notVisible.length > 0 && (
         <section className="card">
           <h2>No se ven esta noche</h2>
@@ -84,6 +91,8 @@ export default function Tonight({ sky, seenIds, wishIds, onToggleWish, onOpen, o
           </div>
         </section>
       )}
+
+      <Apod />
     </>
   )
 }

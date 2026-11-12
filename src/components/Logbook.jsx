@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { INSTRUMENTS } from '../data/catalog'
 import { normalize } from '../utils/text'
 import SightingList from './SightingList'
+import Badges from './Badges'
 
 // Pestaña "Mi bitácora": todos los avistamientos, con buscador.
 // Busca por cuerpo, lugar, notas, instrumento o fecha (ej: "marte", "palermo", "telescopio", "11/2026").
-export default function Logbook({ sightings, loading, onEdit, onDelete }) {
+export default function Logbook({ sightings, loading, badges, onEdit, onDelete }) {
   const [search, setSearch] = useState('')
   const term = normalize(search.trim())
 
@@ -22,6 +23,8 @@ export default function Logbook({ sightings, loading, onEdit, onDelete }) {
   })
 
   return (
+    <>
+    {!loading && <Badges unlocked={badges} />}
     <section className="card">
       <h2>Mi bitácora</h2>
 
@@ -58,5 +61,6 @@ export default function Logbook({ sightings, loading, onEdit, onDelete }) {
         />
       )}
     </section>
+    </>
   )
 }

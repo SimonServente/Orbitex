@@ -239,3 +239,56 @@ legend { padding: 0; margin-bottom: 6px; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { background: var(--card-2); color: var(--muted); font-weight: 400; padding: 6px 12px; border-radius: 999px; }
+
+/* ---------- Versión 3: fotos de NASA, insignias, brújula y foto del día ---------- */
+.orb.photo { object-fit: cover; display: block; background: #000; }
+/* Silueta: la foto real apagada y teñida de azul, como "¿Quién es ese Pokémon?".
+   Se reconoce la forma (los anillos de Saturno, la fase de un cuerpo) pero no los detalles. */
+.orb.photo.unseen,
+.nasa-photo.locked img {
+  filter: grayscale(1) contrast(2.2) brightness(0.32) sepia(1) hue-rotate(185deg) saturate(2.5) blur(0.6px);
+}
+.orb.photo.unseen { box-shadow: 0 0 0 1px rgb(124 140 255 / 0.35); }
+.nasa-photo.locked img { filter: grayscale(1) contrast(2.2) brightness(0.32) sepia(1) hue-rotate(185deg) saturate(2.5) blur(5px); }
+
+.nasa-photo { position: relative; margin: 16px 0 0; border-radius: 10px; overflow: hidden; background: #000; }
+.nasa-photo img { display: block; width: 100%; max-height: 420px; object-fit: contain; }
+.photo-placeholder { padding: 48px; text-align: center; }
+.photo-lock {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle, rgb(11 13 20 / 0.55), rgb(11 13 20 / 0.15));
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  text-align: center; padding: 16px; color: var(--text);
+}
+.photo-lock span { color: var(--muted); font-size: 0.9rem; }
+.nasa-photo figcaption { padding: 10px 12px; font-size: 0.8rem; color: var(--muted); background: var(--card-2); }
+.nasa-photo figcaption a { color: var(--text); }
+
+.badges { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.badge {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+  padding: 14px 10px; border-radius: 10px; background: var(--card-2); opacity: 0.45;
+}
+.badge.on { opacity: 1; outline: 1px solid rgb(255 200 87 / 0.5); }
+.badge-icon { font-size: 1.6rem; line-height: 1; color: var(--muted); }
+.badge.on .badge-icon { color: #ffc857; text-shadow: 0 0 12px rgb(255 200 87 / 0.5); }
+.badge small { color: var(--muted); font-size: 0.75rem; }
+.card h2 .muted { font-weight: 400; font-size: 0.9rem; }
+
+.sky-dome svg { display: block; width: 100%; max-width: 360px; margin: 8px auto; overflow: visible; }
+.dome-bg { fill: #0f1324; stroke: var(--border); stroke-width: 1.5; }
+.dome-ring { fill: none; stroke: rgb(139 144 165 / 0.2); stroke-width: 1; }
+.dome-cardinal { fill: var(--muted); font-size: 12px; text-anchor: middle; font-weight: 600; }
+.dome-body { cursor: pointer; }
+.dome-body { stroke: rgb(255 255 255 / 0.4); stroke-width: 1; }
+.dome-label { fill: var(--text); font-size: 11px; cursor: pointer; paint-order: stroke; stroke: #0f1324; stroke-width: 3px; }
+.time-slider { display: grid; gap: 6px; margin-top: 8px; }
+.time-slider input { padding: 0; accent-color: var(--accent); }
+.slider-labels { display: flex; justify-content: space-between; }
+.center { text-align: center; }
+
+.apod img { display: block; width: 100%; max-height: 420px; object-fit: cover; border-radius: 10px; margin: 8px 0 12px; }
+.apod h2 { margin-bottom: 4px; }
+.eyebrow { margin: 0; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.apod-text { line-height: 1.6; color: var(--muted); font-size: 0.9rem; }
+.apod .link { margin: 4px 0 0; }

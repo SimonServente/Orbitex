@@ -5,6 +5,7 @@ import { subscribeToSightings, addSighting, updateSighting, deleteSighting } fro
 import { subscribeToWishlist, addToWishlist, removeFromWishlist } from './services/wishlist'
 import { computeTonight, BUENOS_AIRES } from './services/sky'
 import { CATALOG } from './data/catalog'
+import { BADGES, unlockedBadges } from './data/badges'
 import BodyGrid from './components/BodyGrid'
 import BodyDetail from './components/BodyDetail'
 import Logbook from './components/Logbook'
@@ -58,6 +59,7 @@ export default function App() {
   const sky = useMemo(() => computeTonight(CATALOG, location), [location])
 
   const seenIds = new Set(sightings.map((s) => s.bodyId))
+  const badges = unlockedBadges(sightings, CATALOG.length)
   const wishIds = new Set(wishlist.map((w) => w.bodyId))
 
   async function handleSave(data) {
@@ -67,10 +69,15 @@ export default function App() {
         notify('Avistamiento actualizado.')
       } else {
         await addSighting(user.uid, data)
+        // Insignias que se desbloquean con este avistamiento
+        const after = unlockedBadges([...sightings, data], CATALOG.length)
+        const newBadges = BADGES.filter((b) => after.includes(b.id) && !badges.includes(b.id))
         // Si estaba en "Quiero ver", ya cumplió el objetivo: se tacha de la lista
         if (wishIds.has(data.bodyId)) await removeFromWishlist(user.uid, data.bodyId)
         notify(
-          wishIds.has(data.bodyId)
+          newBadges.length
+            ? `${newBadges[0].icon} ¡Insignia desbloqueada: ${newBadges[0].name}!${newBadges.length > 1 ? ` (y ${newBadges.length - 1} más)` : ''}`
+            : wishIds.has(data.bodyId)
             ? `¡Objetivo cumplido! ${data.bodyName} salió de tu lista "Quiero ver".`
             : seenIds.has(data.bodyId)
               ? 'Avistamiento registrado.'
@@ -221,7 +228,7 @@ export default function App() {
       )}
 
       {user && view === 'bitacora' && (
-        <Logbook sightings={sightings} loading={loading} onEdit={startEdit} onDelete={handleDelete} />
+        <Logbook sightings={sightings} loading={loading} badges={badges} onEdit={startEdit} onDelete={handleDelete} />
       )}
 
       {toast && <Toast key={toast.key} {...toast} onClose={() => setToast(null)} />}
@@ -229,6 +236,7 @@ export default function App() {
       <footer className="footer">
         Datos científicos: <a href="https://api.le-systeme-solaire.net" target="_blank" rel="noreferrer">Le Système Solaire API</a>
         {' · '}Cálculos del cielo: <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a>
+        {' · '}Fotos: <a href="https://images.nasa.gov" target="_blank" rel="noreferrer">NASA</a>
       </footer>
     </div>
   )

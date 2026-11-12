@@ -2,6 +2,7 @@ import { CATALOG, INSTRUMENTS } from '../data/catalog'
 import Orb from './Orb'
 import Visibility from './Visibility'
 import WishButton from './WishButton'
+import { nasaThumb } from '../services/nasa'
 
 // Pestaña "Quiero ver": los objetivos pendientes, con su visibilidad de esta noche.
 // Los que se ven hoy aparecen primero.
@@ -32,7 +33,7 @@ export default function Wishlist({ wishlist, loading, sky, onToggleWish, onOpen 
           <ul className="sightings">
             {items.map((b) => (
               <li key={b.id} className="sighting">
-                <Orb color={b.color} seen={false} size={40} />
+                <Orb color={b.color} image={nasaThumb(b.nasaId)} seen={false} size={40} />
                 <div className="sighting-info">
                   <strong>{b.name}</strong>
                   <small>{b.group} · se ve con: {INSTRUMENTS[b.difficulty].toLowerCase()}</small>

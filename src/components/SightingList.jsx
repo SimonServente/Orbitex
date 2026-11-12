@@ -1,5 +1,6 @@
 import { CATALOG, INSTRUMENTS } from '../data/catalog'
 import Orb from './Orb'
+import { nasaThumb } from '../services/nasa'
 
 const formatDate = (iso) => iso.split('-').reverse().join('/')
 
@@ -13,7 +14,7 @@ export default function SightingList({ sightings, loading, showBody, onEdit, onD
         const body = CATALOG.find((b) => b.id === s.bodyId)
         return (
           <li key={s.id} className="sighting">
-            {showBody && <Orb color={body?.color ?? '#888'} size={40} />}
+            {showBody && <Orb color={body?.color ?? '#888'} image={body && nasaThumb(body.nasaId)} size={40} />}
             <div className="sighting-info">
               {showBody && <strong>{s.bodyName}</strong>}
               <small>
