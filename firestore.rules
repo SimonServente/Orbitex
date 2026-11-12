@@ -10,6 +10,14 @@ service cloud.firestore {
         && isValidSighting(request.resource.data);
     }
 
+    // Lista "Quiero ver": el id del documento es el id del cuerpo
+    match /users/{uid}/wishlist/{bodyId} {
+      allow read, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && isValidWish(request.resource.data, bodyId);
+    }
+
     function isValidSighting(d) {
       return d.bodyId is string && d.bodyId.size() > 0 && d.bodyId.size() <= 100
         && d.bodyName is string && d.bodyName.size() > 0 && d.bodyName.size() <= 100
@@ -17,6 +25,12 @@ service cloud.firestore {
         && d.place is string && d.place.size() <= 100
         && d.instrument in ['ojo', 'binoculares', 'telescopio']
         && d.notes is string && d.notes.size() <= 1000;
+    }
+
+    function isValidWish(d, bodyId) {
+      return d.keys().hasOnly(['bodyId', 'bodyName', 'addedAt'])
+        && d.bodyId == bodyId
+        && d.bodyName is string && d.bodyName.size() > 0 && d.bodyName.size() <= 100;
     }
   }
 }

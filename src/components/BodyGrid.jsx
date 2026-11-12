@@ -6,7 +6,7 @@ import { normalize } from '../utils/text'
 const GROUPS = ['Luna', 'Planetas', 'Lunas', 'Planetas enanos']
 
 
-export default function BodyGrid({ seenIds, onOpen }) {
+export default function BodyGrid({ seenIds, wishIds, sky, onOpen }) {
   const [search, setSearch] = useState('')
   const term = normalize(search.trim())
 
@@ -48,9 +48,11 @@ export default function BodyGrid({ seenIds, onOpen }) {
                   <li key={b.id}>
                     <button className={`body-card ${seen ? 'seen' : ''}`} onClick={() => onOpen(b.id)}>
                       <span className="number">#{number}</span>
+                      {wishIds.has(b.id) && <span className="wish-mark" title="En tu lista Quiero ver">★</span>}
                       <Orb color={b.color} seen={seen} />
                       <strong>{b.name}</strong>
                       <small>{seen ? 'Visto' : INSTRUMENTS[b.difficulty]}</small>
+                      {sky.byBody[b.id] && <span className="tonight-badge">Se ve hoy</span>}
                     </button>
                   </li>
                 )

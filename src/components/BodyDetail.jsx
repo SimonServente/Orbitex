@@ -4,10 +4,12 @@ import { INSTRUMENTS } from '../data/catalog'
 import Orb from './Orb'
 import SightingForm from './SightingForm'
 import SightingList from './SightingList'
+import Visibility from './Visibility'
+import WishButton from './WishButton'
 
 const fmt = (n, digits = 0) => n.toLocaleString('es-AR', { maximumFractionDigits: digits })
 
-export default function BodyDetail({ body, sightings, editing, onSave, onCancelEdit, onEdit, onDelete, onBack }) {
+export default function BodyDetail({ body, sightings, visibility, wished, onToggleWish, editing, onSave, onCancelEdit, onEdit, onDelete, onBack }) {
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
 
@@ -40,10 +42,12 @@ export default function BodyDetail({ body, sightings, editing, onSave, onCancelE
       <section className="card detail">
         <div className="detail-head">
           <Orb color={body.color} seen={sightings.length > 0} size={96} />
-          <div>
+          <div className="detail-title">
             <h2>{body.name}</h2>
             <p className="muted">{body.group} · Se ve con: {INSTRUMENTS[body.difficulty].toLowerCase()}</p>
+            <Visibility info={visibility} body={body} />
           </div>
+          <WishButton active={wished} onToggle={onToggleWish} />
         </div>
         <p className="tip">{body.tip}</p>
 

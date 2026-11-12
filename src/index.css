@@ -172,3 +172,70 @@ legend { padding: 0; margin-bottom: 6px; }
 .search input { padding: 12px 14px; font-size: 1rem; }
 .empty .link { margin: 0; }
 .search small { display: block; margin-top: 6px; }
+
+/* ---------- Versión 2: Esta noche y Quiero ver ---------- */
+.tabs { flex-wrap: wrap; }
+
+.wish {
+  background: var(--card-2);
+  color: var(--text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.wish.active { background: rgb(255 200 87 / 0.15); color: #ffc857; }
+.wish.compact { padding: 6px 10px; font-size: 1.1rem; line-height: 1; }
+.wish-mark { position: absolute; top: 6px; right: 10px; color: #ffc857; }
+.tonight-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgb(124 140 255 / 0.18);
+  color: var(--accent);
+}
+
+.detail-head { flex-wrap: wrap; }
+.detail-title { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 4px; }
+.detail-title p { margin: 0; }
+
+.vis { font-size: 0.85rem; }
+.vis.yes { color: var(--success); }
+.vis.none { color: var(--muted); }
+.small { font-size: 0.85rem; }
+
+.tonight-head { display: grid; gap: 16px; }
+.moon-phase { display: flex; gap: 16px; align-items: center; }
+.moon-phase h2 { margin: 0; }
+.moon-phase p { margin: 2px 0; }
+/* Disco lunar visto desde el hemisferio sur: la creciente se ilumina desde la izquierda */
+.moon-disc {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(to right, #e9e7df var(--lit), #2a3045 var(--lit));
+  box-shadow: 0 0 24px rgb(233 231 223 / 0.15);
+}
+.moon-disc[data-waxing='false'] { background: linear-gradient(to left, #e9e7df var(--lit), #2a3045 var(--lit)); }
+.night-info p { margin: 4px 0; }
+.night-info .link { margin: 0; font-size: inherit; }
+
+.tonight-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.tonight-list li { display: flex; gap: 8px; align-items: center; }
+.tonight-item {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  background: var(--card-2);
+  color: var(--text);
+  font-weight: 400;
+  padding: 12px;
+}
+.tonight-item:hover { outline: 1px solid var(--accent); }
+.tonight-text { display: flex; flex-direction: column; gap: 2px; }
+.tonight-time { color: var(--accent); font-weight: 600; }
+.tonight-text small { color: var(--muted); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { background: var(--card-2); color: var(--muted); font-weight: 400; padding: 6px 12px; border-radius: 999px; }

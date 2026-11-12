@@ -2,6 +2,8 @@
 
 Aplicación web para registrar qué cuerpos del sistema solar viste en el cielo. Cada planeta, luna o planeta enano tiene una ficha con datos científicos, una guía para encontrarlo y tu historial de avistamientos. La colección se va completando a medida que los ves.
 
+Además, calcula qué se puede ver esta noche desde tu ubicación (hora, dirección y altura) y te deja armar una lista de objetivos "Quiero ver", que se tachan solos cuando registrás el avistamiento.
+
 Trabajo Práctico 2 de Desarrollo Frontend II (UADE).
 
 ## Tecnologías
@@ -10,6 +12,7 @@ Trabajo Práctico 2 de Desarrollo Frontend II (UADE).
 - **Firebase Authentication** (anónima): identifica a cada visitante sin registro.
 - **Cloud Firestore**: guarda los avistamientos de cada usuario.
 - **Le Système Solaire API**: datos científicos de cada cuerpo (gravedad, temperatura, órbita, lunas, descubrimiento).
+- **Astronomy Engine**: calcula en el navegador la posición de los planetas y la fase lunar (sin internet ni clave).
 - **Vercel**: publicación.
 
 ## Cómo ejecutarlo
@@ -35,14 +38,17 @@ Trabajo Práctico 2 de Desarrollo Frontend II (UADE).
 
 ## Datos guardados
 
-Cada avistamiento se guarda en `users/{uid}/sightings/{sightingId}` con: cuerpo (id y nombre), fecha, lugar, instrumento (`ojo`, `binoculares` o `telescopio`) y notas.
+- **Avistamientos**: `users/{uid}/sightings/{sightingId}` con cuerpo (id y nombre), fecha, lugar, instrumento (`ojo`, `binoculares` o `telescopio`) y notas.
+- **Lista "Quiero ver"**: `users/{uid}/wishlist/{bodyId}` con el id y nombre del cuerpo y la fecha en que se agregó. El id del documento es el del cuerpo, así no se puede repetir.
 
-Las reglas permiten que cada usuario lea y modifique solo sus propios avistamientos, y validan los campos antes de guardar.
+Las reglas permiten que cada usuario lea y modifique solo sus propios datos, y validan los campos antes de guardar.
 
 ## Dónde está cada cosa
 
 - `src/firebase.js`: conexión con Firebase.
 - `src/services/sightings.js`: consultar, agregar, modificar y eliminar avistamientos en Firestore.
+- `src/services/wishlist.js`: consultar, agregar y quitar cuerpos de la lista "Quiero ver" en Firestore.
+- `src/services/sky.js`: qué se ve esta noche y fase lunar (Astronomy Engine).
 - `src/services/solarSystem.js`: datos científicos desde Le Système Solaire API.
 - `api/body.js`: función serverless de Vercel que llama a la API con el token (la API no permite hacerlo desde el navegador).
 - `src/data/catalog.js`: cuerpos coleccionables, nombres en español y consejos de observación.
