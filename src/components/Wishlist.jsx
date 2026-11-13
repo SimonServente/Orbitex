@@ -20,7 +20,7 @@ export default function Wishlist({ wishlist, loading, sky, onToggleWish, onOpen 
       <h2>Quiero ver</h2>
       {items.length === 0 ? (
         <p className="muted">
-          Tu lista está vacía. Tocá ☆ en cualquier cuerpo de la Pokédex para agregarlo como objetivo.
+          Tu lista está vacía. Tocá ☆ en cualquier cuerpo del álbum para agregarlo como objetivo.
         </p>
       ) : (
         <>

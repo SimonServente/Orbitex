@@ -2,11 +2,10 @@ import { useState } from 'react'
 import { INSTRUMENTS } from '../data/catalog'
 import { normalize } from '../utils/text'
 import SightingList from './SightingList'
-import Badges from './Badges'
 
 // Pestaña "Mi bitácora": todos los avistamientos, con buscador.
 // Busca por cuerpo, lugar, notas, instrumento o fecha (ej: "marte", "palermo", "telescopio", "11/2026").
-export default function Logbook({ sightings, loading, badges, onEdit, onDelete }) {
+export default function Logbook({ sightings, loading, badgeCount, onOpenBadges, onEdit, onDelete }) {
   const [search, setSearch] = useState('')
   const term = normalize(search.trim())
 
@@ -23,10 +22,18 @@ export default function Logbook({ sightings, loading, badges, onEdit, onDelete }
   })
 
   return (
-    <>
-    {!loading && <Badges unlocked={badges} />}
-    <section className="card">
-      <h2>Mi bitácora</h2>
+    <section className="section">
+      <div className="section-head">
+        <div>
+          <h2 className="section-title">Bitácora</h2>
+          <p className="muted">
+            {sightings.length === 1 ? '1 avistamiento registrado' : `${sightings.length} avistamientos registrados`}
+          </p>
+        </div>
+        <button className="secondary" onClick={onOpenBadges}>
+          Ver tus insignias ({badgeCount})
+        </button>
+      </div>
 
       {sightings.length > 0 && (
         <div className="search">
@@ -57,10 +64,9 @@ export default function Logbook({ sightings, loading, badges, onEdit, onDelete }
           showBody
           onEdit={onEdit}
           onDelete={onDelete}
-          empty="Todavía no registraste avistamientos. Abrí un cuerpo de la Pokédex para empezar."
+          empty="Todavía no registraste avistamientos. Abrí un cuerpo del álbum para empezar."
         />
       )}
     </section>
-    </>
   )
 }

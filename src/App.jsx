@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { onAuthStateChanged, signInAnonymously } from 'firebase/auth'
 import { auth } from './firebase'
 import { subscribeToSightings, addSighting, updateSighting, deleteSighting } from './services/sightings'
@@ -12,6 +12,10 @@ import Logbook from './components/Logbook'
 import Tonight from './components/Tonight'
 import Wishlist from './components/Wishlist'
 import Toast from './components/Toast'
+import Hero from './components/Hero'
+import TonightSummary from './components/TonightSummary'
+import CollectionPanel from './components/CollectionPanel'
+import { IconCatalog, IconNight, IconStar, IconLog } from './components/Icons'
 
 export default function App() {
   const [user, setUser] = useState(null)
@@ -20,12 +24,14 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [wishlist, setWishlist] = useState([])
   const [loadingWishlist, setLoadingWishlist] = useState(true)
-  const [view, setView] = useState('pokedex') // 'pokedex' | 'noche' | 'quiero' | 'bitacora'
+  const [view, setView] = useState('album') // 'album' | 'noche' | 'quiero' | 'bitacora'
   const [selectedId, setSelectedId] = useState(null) // cuerpo abierto en la ficha
   const [editing, setEditing] = useState(null) // avistamiento en edición
   const [location, setLocation] = useState(BUENOS_AIRES)
   const [locating, setLocating] = useState(false)
   const [toast, setToast] = useState(null)
+  const [panel, setPanel] = useState(null) // null | 'coleccion' | 'insignias'
+  const contentRef = useRef(null) // inicio del contenido (debajo del encabezado)
 
   const notify = (message, type = 'success') => setToast({ message, type, key: Date.now() })
 
@@ -85,6 +91,8 @@ export default function App() {
         )
       }
       setEditing(null)
+      // Vuelve al comienzo de la ficha para ver la foto que se acaba de revelar
+      requestAnimationFrame(scrollToContent)
       return true
     } catch {
       notify('No se pudo guardar. Probá de nuevo.', 'error')
@@ -135,109 +143,150 @@ export default function App() {
     )
   }
 
+  // Al cambiar de sección, se lleva la vista al comienzo del contenido (no arriba de todo,
+  // para no obligar a pasar de nuevo por la imagen del día)
+  function scrollToContent() {
+    const el = contentRef.current
+    if (!el) return
+    const top = el.getBoundingClientRect().top + window.scrollY
+    if (window.scrollY > top || el.getBoundingClientRect().top > window.innerHeight * 0.6) {
+      window.scrollTo({ top, behavior: 'smooth' })
+    }
+  }
+
   function openBody(id) {
     setSelectedId(id)
     setEditing(null)
-    setView('pokedex')
-    window.scrollTo({ top: 0 })
+    setView('album')
+    setPanel(null)
+    requestAnimationFrame(scrollToContent)
   }
 
   function startEdit(s) {
     setEditing(s)
     setSelectedId(s.bodyId)
-    setView('pokedex')
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    setView('album')
+    requestAnimationFrame(scrollToContent)
   }
 
   function goTo(v) {
     setView(v)
     setSelectedId(null)
     setEditing(null)
+    requestAnimationFrame(scrollToContent)
   }
 
   const selected = CATALOG.find((b) => b.id === selectedId)
-  const tonightCount = CATALOG.filter((b) => sky.byBody[b.id] && b.group !== 'Lunas').length
+
+  const TABS = [
+    { id: 'album', label: 'Álbum', Icon: IconCatalog },
+    { id: 'noche', label: 'Esta noche', Icon: IconNight },
+    { id: 'quiero', label: 'Quiero ver', count: wishlist.length, Icon: IconStar },
+    { id: 'bitacora', label: 'Bitácora', count: sightings.length, Icon: IconLog },
+  ]
 
   return (
-    <div className="app">
-      <header className="header">
-        <div>
-          <h1>Orbitex</h1>
-          <p>La Pokédex del sistema solar</p>
-        </div>
-        <div className="progress" aria-label="Progreso de la colección">
-          <strong>{seenIds.size}</strong>/{CATALOG.length}
-          <span>vistos</span>
-        </div>
-      </header>
+    <>
+      <Hero
+        seenCount={seenIds.size}
+        total={CATALOG.length}
+        badgeCount={badges.length}
+        badgeTotal={BADGES.length}
+        onOpenCollection={() => setPanel('coleccion')}
+        onOpenBadges={() => setPanel('insignias')}
+      />
 
-      <nav className="tabs">
-        <button className={view === 'pokedex' ? 'active' : ''} onClick={() => goTo('pokedex')}>Pokédex</button>
-        <button className={view === 'noche' ? 'active' : ''} onClick={() => goTo('noche')}>
-          Esta noche ({tonightCount})
-        </button>
-        <button className={view === 'quiero' ? 'active' : ''} onClick={() => goTo('quiero')}>
-          Quiero ver ({wishlist.length})
-        </button>
-        <button className={view === 'bitacora' ? 'active' : ''} onClick={() => goTo('bitacora')}>
-          Mi bitácora ({sightings.length})
-        </button>
+      <TonightSummary sky={sky} onOpenTonight={() => goTo('noche')} onOpen={openBody} />
+
+      {/* Pestañas: arriba y fijas en computadora; abajo, tipo app, en celular */}
+      <nav className="tabs" aria-label="Secciones">
+        {TABS.map(({ id, label, count, Icon }) => (
+          <button
+            key={id}
+            className={view === id ? 'active' : ''}
+            aria-current={view === id ? 'page' : undefined}
+            onClick={() => goTo(id)}
+          >
+            <Icon />
+            <span className="tab-label">{label}</span>
+            {count > 0 && <span className="tab-count">{count}</span>}
+          </button>
+        ))}
       </nav>
 
-      {authError && (
-        <p className="error-box">
-          No se pudo conectar ({authError}). Revisá que Authentication → Anónimo esté activado en Firebase.
-        </p>
-      )}
-      {!user && !authError && <p className="loading">Conectando…</p>}
+      <main className="content" ref={contentRef}>
+        {authError && (
+          <p className="error-box">
+            No se pudo conectar con la base de datos ({authError}). Revisá que Authentication → Anónimo esté activado en Firebase.
+          </p>
+        )}
+        {!user && !authError && <p className="loading">Conectando…</p>}
 
-      {user && view === 'pokedex' && !selected && (
-        <BodyGrid seenIds={seenIds} wishIds={wishIds} sky={sky} onOpen={openBody} />
-      )}
+        {user && view === 'album' && !selected && (
+          <BodyGrid seenIds={seenIds} wishIds={wishIds} sky={sky} onOpen={openBody} />
+        )}
 
-      {user && view === 'pokedex' && selected && (
-        <BodyDetail
-          body={selected}
-          sightings={sightings.filter((s) => s.bodyId === selected.id)}
-          visibility={sky.byBody[selected.id]}
-          wished={wishIds.has(selected.id)}
-          onToggleWish={() => toggleWish(selected)}
-          editing={editing}
-          onSave={handleSave}
-          onCancelEdit={() => setEditing(null)}
-          onEdit={startEdit}
-          onDelete={handleDelete}
-          onBack={() => { setSelectedId(null); setEditing(null) }}
-        />
-      )}
+        {user && view === 'album' && selected && (
+          <BodyDetail
+            body={selected}
+            sightings={sightings.filter((s) => s.bodyId === selected.id)}
+            visibility={sky.byBody[selected.id]}
+            wished={wishIds.has(selected.id)}
+            onToggleWish={() => toggleWish(selected)}
+            editing={editing}
+            onSave={handleSave}
+            onCancelEdit={() => setEditing(null)}
+            onEdit={startEdit}
+            onDelete={handleDelete}
+            onBack={() => { setSelectedId(null); setEditing(null) }}
+          />
+        )}
 
-      {user && view === 'noche' && (
-        <Tonight
-          sky={sky}
-          seenIds={seenIds}
-          wishIds={wishIds}
-          onToggleWish={toggleWish}
-          onOpen={openBody}
-          onUseMyLocation={useMyLocation}
-          locating={locating}
-        />
-      )}
+        {user && view === 'noche' && (
+          <Tonight
+            sky={sky}
+            seenIds={seenIds}
+            wishIds={wishIds}
+            onToggleWish={toggleWish}
+            onOpen={openBody}
+            onUseMyLocation={useMyLocation}
+            locating={locating}
+          />
+        )}
 
-      {user && view === 'quiero' && (
-        <Wishlist wishlist={wishlist} loading={loadingWishlist} sky={sky} onToggleWish={toggleWish} onOpen={openBody} />
-      )}
+        {user && view === 'quiero' && (
+          <Wishlist wishlist={wishlist} loading={loadingWishlist} sky={sky} onToggleWish={toggleWish} onOpen={openBody} />
+        )}
 
-      {user && view === 'bitacora' && (
-        <Logbook sightings={sightings} loading={loading} badges={badges} onEdit={startEdit} onDelete={handleDelete} />
-      )}
-
-      {toast && <Toast key={toast.key} {...toast} onClose={() => setToast(null)} />}
+        {user && view === 'bitacora' && (
+          <Logbook
+            sightings={sightings}
+            loading={loading}
+            badgeCount={badges.length}
+            onOpenBadges={() => setPanel('insignias')}
+            onEdit={startEdit}
+            onDelete={handleDelete}
+          />
+        )}
+      </main>
 
       <footer className="footer">
-        Datos científicos: <a href="https://api.le-systeme-solaire.net" target="_blank" rel="noreferrer">Le Système Solaire API</a>
-        {' · '}Cálculos del cielo: <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a>
-        {' · '}Fotos: <a href="https://images.nasa.gov" target="_blank" rel="noreferrer">NASA</a>
+        <p>
+          Datos: <a href="https://api.le-systeme-solaire.net" target="_blank" rel="noreferrer">Le Système Solaire</a>,{' '}
+          cálculos del cielo: <a href="https://github.com/cosinekitty/astronomy" target="_blank" rel="noreferrer">Astronomy Engine</a>,{' '}
+          fotos: <a href="https://images.nasa.gov" target="_blank" rel="noreferrer">NASA</a>.
+        </p>
       </footer>
-    </div>
+
+      <CollectionPanel
+        mode={panel}
+        onClose={() => setPanel(null)}
+        sightings={sightings}
+        seenIds={seenIds}
+        badges={badges}
+      />
+
+      {toast && <Toast key={toast.key} {...toast} onClose={() => setToast(null)} />}
+    </>
   )
 }

@@ -6,7 +6,7 @@
 const API = 'https://images-api.nasa.gov'
 const cache = new Map()
 
-// Miniatura directa (sin pedir nada a la API): se usa en la grilla de la Pokédex
+// Miniatura directa (sin pedir nada a la API): se usa en la grilla del álbum
 export const nasaThumb = (nasaId) =>
   `https://images-assets.nasa.gov/image/${nasaId}/${nasaId}~thumb.jpg`
 

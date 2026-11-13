@@ -41,7 +41,7 @@ export const BADGES = [
     test: ({ sightings }) => new Set(sightings.map((s) => s.date)).size >= 5 },
   { id: 'racha', icon: '⚡', name: 'Racha', desc: 'Observá 3 noches seguidas.',
     test: ({ sightings }) => longestStreak(sightings) >= 3 },
-  { id: 'completa', icon: '★', name: 'Colección completa', desc: 'Los 15 cuerpos de la Pokédex.',
+  { id: 'completa', icon: '★', name: 'Colección completa', desc: 'Completá los 15 cuerpos del álbum.',
     test: ({ seen, total }) => seen.size >= total },
 ]
 

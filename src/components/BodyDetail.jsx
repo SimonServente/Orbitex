@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getBody } from '../services/solarSystem'
-import { getNasaPhoto, nasaThumb } from '../services/nasa'
-import { INSTRUMENTS } from '../data/catalog'
-import Orb from './Orb'
+import { getNasaPhoto } from '../services/nasa'
+import { CATALOG, INSTRUMENTS } from '../data/catalog'
 import SightingForm from './SightingForm'
 import SightingList from './SightingList'
 import Visibility from './Visibility'
@@ -46,25 +45,16 @@ export default function BodyDetail({ body, sightings, visibility, wished, onTogg
     data.discoveredBy && ['Descubierto por', `${data.discoveredBy}${data.discoveryDate ? ` (${data.discoveryDate})` : ''}`],
   ].filter(Boolean)
 
+  const number = String(CATALOG.indexOf(body) + 1).padStart(3, '0')
+
   return (
     <>
-      <button className="link" onClick={onBack}>← Volver a la Pokédex</button>
+      <button className="back" onClick={onBack}>Volver al álbum</button>
 
-      <section className="card detail">
-        <div className="detail-head">
-          <Orb color={body.color} image={nasaThumb(body.nasaId)} seen={seen} size={96} />
-          <div className="detail-title">
-            <h2>{body.name}</h2>
-            <p className="muted">{body.group} · Se ve con: {INSTRUMENTS[body.difficulty].toLowerCase()}</p>
-            <Visibility info={visibility} body={body} />
-          </div>
-          <WishButton active={wished} onToggle={onToggleWish} />
-        </div>
-        <p className="tip">{body.tip}</p>
-
+      <article className="detail">
         <figure className={`nasa-photo ${seen ? '' : 'locked'}`}>
           {photo ? (
-            <img src={photo.image} alt={seen ? photo.title : ''} />
+            <img src={photo.image} alt={seen ? photo.title : `Silueta de ${body.name}`} />
           ) : (
             <div className="photo-placeholder loading">Cargando foto de NASA…</div>
           )}
@@ -77,21 +67,36 @@ export default function BodyDetail({ body, sightings, visibility, wished, onTogg
           {photo && seen && (
             <figcaption>
               <a href={photo.link} target="_blank" rel="noreferrer">{photo.title}</a>
-              {' · '}{[photo.mission, photo.year].filter(Boolean).join(', ')} · {photo.credit}
+              <span>{[photo.mission, photo.year].filter(Boolean).join(', ')}. {photo.credit}</span>
             </figcaption>
           )}
         </figure>
 
-        {!data && !error && <p className="loading">Cargando datos…</p>}
-        {error && <p className="error-box">{error}</p>}
-        {facts && (
-          <dl className="facts">
-            {facts.map(([k, v]) => (
-              <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
-            ))}
-          </dl>
-        )}
-      </section>
+        <div className="detail-info">
+          <p className="detail-meta">
+            <span>N.º {number}</span>
+            <span>{body.group}</span>
+            <span>Se ve {body.difficulty === 'ojo' ? 'a ojo' : `con ${INSTRUMENTS[body.difficulty].toLowerCase()}`}</span>
+          </p>
+          <h2 className="detail-name">{body.name}</h2>
+          <Visibility info={visibility} body={body} />
+          <div className="detail-actions">
+            <WishButton active={wished} onToggle={onToggleWish} />
+          </div>
+
+          <blockquote className="tip">{body.tip}</blockquote>
+
+          {!data && !error && <p className="loading">Cargando datos…</p>}
+          {error && <p className="error-box">{error}</p>}
+          {facts && (
+            <dl className="facts">
+              {facts.map(([k, v]) => (
+                <div key={k}><dt>{k}</dt><dd>{v}</dd></div>
+              ))}
+            </dl>
+          )}
+        </div>
+      </article>
 
       <SightingForm
         key={editing?.id ?? body.id}
@@ -102,7 +107,7 @@ export default function BodyDetail({ body, sightings, visibility, wished, onTogg
       />
 
       <section className="card">
-        <h2>Tus avistamientos de {body.name}</h2>
+        <h2 className="card-title">Tus avistamientos de {body.name}</h2>
         <SightingList
           sightings={sightings}
           onEdit={onEdit}

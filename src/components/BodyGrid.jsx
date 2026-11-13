@@ -21,10 +21,10 @@ export default function BodyGrid({ seenIds, wishIds, sky, onOpen }) {
       <div className="search">
         <input
           type="search"
-          placeholder="Buscar: Marte, Saturno, lunas…"
+          placeholder="Buscar por nombre o tipo: Marte, Saturno, lunas…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          aria-label="Buscar en la Pokédex"
+          aria-label="Buscar en el álbum"
         />
       </div>
 
@@ -40,7 +40,7 @@ export default function BodyGrid({ seenIds, wishIds, sky, onOpen }) {
         if (bodies.length === 0) return null
         return (
           <section key={group} className="group">
-            <h2>{group}</h2>
+            <h2 className="group-title">{group}</h2>
             <ul className="grid">
               {bodies.map((b) => {
                 const seen = seenIds.has(b.id)
@@ -48,9 +48,9 @@ export default function BodyGrid({ seenIds, wishIds, sky, onOpen }) {
                 return (
                   <li key={b.id}>
                     <button className={`body-card ${seen ? 'seen' : ''}`} onClick={() => onOpen(b.id)}>
-                      <span className="number">#{number}</span>
+                      <span className="number">N.º {number}</span>
                       {wishIds.has(b.id) && <span className="wish-mark" title="En tu lista Quiero ver">★</span>}
-                      <Orb color={b.color} image={nasaThumb(b.nasaId)} seen={seen} />
+                      <Orb color={b.color} image={nasaThumb(b.nasaId)} seen={seen} size={96} />
                       <strong>{b.name}</strong>
                       <small>{seen ? 'Visto' : INSTRUMENTS[b.difficulty]}</small>
                       {sky.byBody[b.id] && <span className="tonight-badge">Se ve hoy</span>}

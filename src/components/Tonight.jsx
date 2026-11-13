@@ -3,7 +3,6 @@ import { formatTime, rangeText } from '../services/sky'
 import Orb from './Orb'
 import WishButton from './WishButton'
 import SkyDome from './SkyDome'
-import Apod from './Apod'
 import { nasaThumb } from '../services/nasa'
 
 // Pestaña "Esta noche": qué cuerpos se pueden ver, cuándo y hacia dónde mirar
@@ -91,8 +90,6 @@ export default function Tonight({ sky, seenIds, wishIds, onToggleWish, onOpen, o
           </div>
         </section>
       )}
-
-      <Apod />
     </>
   )
 }

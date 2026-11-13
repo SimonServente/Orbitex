@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 // Representación de un cuerpo. Si tiene foto de NASA se muestra la foto;
-// si todavía no se vio, la foto aparece como silueta (como en la Pokédex).
+// si todavía no se vio, la foto aparece como silueta que se revela al registrarlo.
 // Si la foto no carga, se usa una esfera con el color característico del cuerpo.
 export default function Orb({ color, image, seen = true, size = 64 }) {
   const [failed, setFailed] = useState(false)

@@ -1,10 +1,10 @@
-# Orbitex · La Pokédex del sistema solar
+# Orbitex · El álbum del sistema solar
 
 Aplicación web para registrar qué cuerpos del sistema solar viste en el cielo. Cada planeta, luna o planeta enano tiene una ficha con datos científicos, una guía para encontrarlo y tu historial de avistamientos. La colección se va completando a medida que los ves.
 
 Además, calcula qué se puede ver esta noche desde tu ubicación (hora, dirección y altura) y te deja armar una lista de objetivos "Quiero ver", que se tachan solos cuando registrás el avistamiento.
 
-Como en una Pokédex, los cuerpos que todavía no viste aparecen como silueta de su foto real de NASA, que se revela al registrarlos. Los avistamientos desbloquean insignias, y la pestaña "Esta noche" incluye una brújula del cielo y la foto astronómica del día de NASA.
+Los cuerpos que todavía no viste aparecen como silueta de su foto real de NASA, que se revela al registrarlos. Los avistamientos desbloquean insignias, y la pestaña "Esta noche" incluye una brújula del cielo y la foto astronómica del día de NASA.
 
 Trabajo Práctico 2 de Desarrollo Frontend II (UADE).
 
